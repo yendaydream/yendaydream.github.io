@@ -62,7 +62,6 @@ img {
 		    		document.getElementById('status').innerHTML = 'We are not logged in.'
 		    	} else {
 		    		document.getElementById('status').innerHTML = 'You are not logged into Facebook. Please click on the Login button';
-
 		    	}
 		    });
 		};
@@ -84,7 +83,7 @@ img {
 		    	} else {
 		    		document.getElementById('status').innerHTML = 'You are not logged into Facebook.';
 		    	}
-			}, {scope: 'email'});
+			}, {scope: 'email', 'user_posts', 'user_photos'});
 		}
 		
 		// getting basic user info
