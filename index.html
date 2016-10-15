@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+    border-collapse: collapse;
+    width: 80%;
+}
+
+tr:hover {background-color: #f5f5f5}
+
+tr:first-child td {
+    background-color: #90EE90;
+	text-align: center;
+	width: 20%
+}
+
+tr:first-child td {
+    background-color: #90EE90;
+	text-align: center;
+	width: 15%
+}
+
+th, td {
+    text-align: center;
+    padding: 5px;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+img {
+    padding:0px;
+    border:0px;
+    margin:15px;
+}
+
+</style>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+</head>
+<body>
+	<script>
+		// initialize and setup facebook js sdk
+		window.fbAsyncInit = function() {
+		    FB.init({
+		      appId      : '1666932866953518',
+		      xfbml      : true,
+		      version    : 'v2.8'
+		    });
+		    FB.getLoginStatus(function(response) {
+		    	if (response.status === 'connected') {
+		    		document.getElementById('status').innerHTML = 'Welcome to use my app!';
+		    		<!--document.getElementById('login').style.visibility = 'hidden';-->
+		    	} else if (response.status === 'not_authorized') {
+		    		document.getElementById('status').innerHTML = 'We are not logged in.'
+		    	} else {
+		    		document.getElementById('status').innerHTML = 'You are not logged into Facebook.';
+		    	}
+		    });
+		};
+		(function(d, s, id){
+		    var js, fjs = d.getElementsByTagName(s)[0];
+		    if (d.getElementById(id)) {return;}
+		    js = d.createElement(s); js.id = id;
+		    js.src = "//connect.facebook.net/en_US/sdk.js";
+		    fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+		
+		// login with facebook with extra permissions
+		function login() {
+			FB.login(function(response) {
+				if (response.status === 'connected') {
+		    		document.getElementById('status').innerHTML = 'Welcome to use my app!';
+		    	} else if (response.status === 'not_authorized') {
+		    		document.getElementById('status').innerHTML = 'We are not logged in.'
+		    	} else {
+		    		document.getElementById('status').innerHTML = 'You are not logged into Facebook.';
+		    	}
+			}, {scope: 'email'});
+		}
+		
+		// getting basic user info
+		var hash;
+		function testFun() {
+			hash = [];
+			var table = document.getElementById("myTable");
+			table.innerHTML = "";
+			
+			FB.api('/me/posts',{fields: 'likes'}, function(response) {
+				if (response && !response.error) {
+					for (var i=0; i<response.data.length; i++){
+						var likes = response.data[i].likes.data;
+						for (var j=0; j<likes.length; j++)
+						{
+							var new_name = likes[j].name;
+							var find = 0;
+							for (var k = 0; k < hash.length; k++) {
+								if(hash[k].name == new_name) {
+									hash[k].likes +=1;
+									find = 1;
+									
+									break;
+								}
+							}
+							if (!find){
+								hash.push({});
+								hash[hash.length-1].name = new_name;
+								hash[hash.length-1].likes = 1;
+							}
+						}
+					}
+				
+				}
+				var str = "";
+				var row, cell1, cell2;
+
+				for(var i = hash.length -1; i>=0;i--){
+					row = table.insertRow(0);
+					cell1 = row.insertCell(0);
+					cell2 = row.insertCell(1);
+					cell1.innerHTML = hash[i].name;
+					cell2.innerHTML = hash[i].likes;
+				}
+				row = table.insertRow(0);
+				cell1 = row.insertCell(0);
+				cell2 = row.insertCell(1);
+				cell1.innerHTML = "名字";
+				cell2.innerHTML = "按讚數";
+			});
+		}
+		
+		function testFun2() {
+			hash = [];
+			var table = document.getElementById("myTable");
+			table.innerHTML = "";
+			FB.api('/me/posts', function(response) {
+				if (response && !response.error) {
+					for (var i=0; i<response.data.length; i++){
+						var story = response.data[i].story;
+						var message = response.data[i].message;
+						hash.push({});
+						hash[hash.length-1].story = story;
+						hash[hash.length-1].message = message;
+					}
+				}
+			});
+			
+			FB.api('/me/posts',{fields: 'comments'}, function(response) {
+				if (response && !response.error) {
+					for (var i=0; i<response.data.length; i++){
+						var comment = response.data[i].comments.data;
+						for (var j=0; j<comment.length; j++)
+						{
+							var mes = comment[j].message;
+							var new_name = comment[j].from.name;
+							if (j == 0) hash[i].comments = [];
+							hash[i].comments.push({});
+							hash[i].comments[hash[i].comments.length-1].name = new_name;
+							hash[i].comments[hash[i].comments.length-1].message = mes;
+						}
+					}
+				}
+				
+				var row, cell1, cell2;
+				row = table.insertRow(0);
+				cell1 = row.insertCell(0);
+				cell2 = row.insertCell(1);
+				cell3 = row.insertCell(2);
+				cell1.innerHTML = "Story";
+				cell2.innerHTML = "名字";
+				cell3.innerHTML = "回覆內容";
+				
+				
+				for (var i = 0; i < hash.length; i++){
+					row = table.insertRow(table.rows.length);
+					cell1 = row.insertCell(0);
+					var str = "";
+					if (hash[i].story != undefined)
+						str += hash[i].story;
+					if (hash[i].message != undefined)
+						str += hash[i].message;
+					cell1.innerHTML = str;
+					for (var j=0; j < hash[i].comments.length; j++){
+						if (j > 0){
+							row = table.insertRow(table.rows.length);
+							cell1 = row.insertCell(0);
+						}
+						cell2 = row.insertCell(1);
+						cell3 = row.insertCell(2);
+						cell2.innerHTML = hash[i].comments[j].name;
+						cell3.innerHTML = hash[i].comments[j].message;
+					}
+				}
+			});
+
+		}
+		function testFun3() {
+			hash = [];
+			var table = document.getElementById("myTable");
+			table.innerHTML = "";
+			
+			FB.api('/me/photos', function(response) {
+				if (response && !response.error) {
+					for (var i=0; i<response.data.length; i++){
+						hash.push({});
+						hash[hash.length-1].topic = response.data[i].name;
+					}
+				}
+			});
+			
+			FB.api('/me/photos',{fields: 'comments'}, function(response) {
+				if (response && !response.error) {
+					for (var i=0; i<response.data.length; i++){
+						if (response.data[i].comments!=undefined){
+						var comment = response.data[i].comments.data;
+							for (var j=0; j<comment.length; j++)
+							{
+								var mes = comment[j].message;
+								var new_name = comment[j].from.name;
+								if (j == 0) hash[i].comments = [];
+								hash[i].comments.push({});
+								hash[i].comments[hash[i].comments.length-1].name = new_name;
+								hash[i].comments[hash[i].comments.length-1].message = mes;
+							}
+						}
+					}
+				}
+				for (var i = 0; i < hash.length; i++){
+					if (hash[i].topic != undefined)
+						console.log(hash[i].topic);
+					if (hash[i].comments != undefined){
+						for (var j=0; j<hash[i].comments.length; j++){
+							console.log(hash[i].comments[j].name + " " + hash[i].comments[j].message)
+						}
+					}
+				}
+			});
+			
+									
+			FB.api('/me/photos',{fields: 'images'}, function(response) {
+				if (response && !response.error) {
+					for (var i=0; i<response.data.length; i++){
+						for (var j = 0; j < response.data[i].images.length; j++){
+							if (response.data[i].images[j].height ==320 || response.data[i].images[j].width ==320){
+								var img = document.createElement("img");
+								var link = document.createElement('a');
+								img.src = response.data[i].images[j].source;
+								img.width = response.data[i].images[j].width;
+								img.height = response.data[i].images[j].height;
+								img.onclick = function() {
+								
+									
+								};
+								document.body.appendChild(img);
+								break;
+							}
+							
+						}
+						
+					
+					}
+				}
+			});
+		}
+	</script>
+
+	<div id="status"></div>
+	<button onclick="login()" id="login">Login</button>
+	<button onclick="testFun()" id="test">Get Likes On Your Posts</button>
+	<button onclick="testFun2()" id="test2">Get Comments On Your Posts</button>
+	<button onclick="testFun3()" id="test3">Get Comments On Your Photos</button>
+	<table id="myTable"></table>
+	<div id="info"></div>
+</body>
+</html>
