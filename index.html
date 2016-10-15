@@ -94,7 +94,7 @@ img {
 			var table = document.getElementById("myTable");
 			table.innerHTML = "";
 			
-			FB.api('/{user-id}/posts',{fields: 'likes'}, function(response) {
+			FB.api('/me/posts',{fields: 'likes'}, function(response) {
 				if (response && !response.error) {
 					for (var i=0; i<response.data.length; i++){
 						var likes = response.data[i].likes.data;
@@ -141,7 +141,7 @@ img {
 			hash = [];
 			var table = document.getElementById("myTable");
 			table.innerHTML = "";
-			FB.api('/{user-id}/posts', function(response) {
+			FB.api('/me/posts', function(response) {
 				if (response && !response.error) {
 					for (var i=0; i<response.data.length; i++){
 						var story = response.data[i].story;
@@ -153,7 +153,7 @@ img {
 				}
 			});
 			
-			FB.api('/{user-id}/posts',{fields: 'comments'}, function(response) {
+			FB.api('/me/posts',{fields: 'comments'}, function(response) {
 				if (response && !response.error) {
 					for (var i=0; i<response.data.length; i++){
 						var comment = response.data[i].comments.data;
@@ -207,7 +207,7 @@ img {
 			var table = document.getElementById("myTable");
 			table.innerHTML = "";
 			
-			FB.api('/{user-id}/photos', function(response) {
+			FB.api('/me/photos', function(response) {
 				if (response && !response.error) {
 					for (var i=0; i<response.data.length; i++){
 						hash.push({});
@@ -216,7 +216,7 @@ img {
 				}
 			});
 			
-			FB.api('/{user-id}/photos',{fields: 'comments'}, function(response) {
+			FB.api('/me/photos',{fields: 'comments'}, function(response) {
 				if (response && !response.error) {
 					for (var i=0; i<response.data.length; i++){
 						if (response.data[i].comments!=undefined){
@@ -245,7 +245,7 @@ img {
 			});
 			
 									
-			FB.api('/{user-id}/photos',{fields: 'images'}, function(response) {
+			FB.api('/me/photos',{fields: 'images'}, function(response) {
 				if (response && !response.error) {
 					for (var i=0; i<response.data.length; i++){
 						for (var j = 0; j < response.data[i].images.length; j++){
